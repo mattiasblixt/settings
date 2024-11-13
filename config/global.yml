@@ -1,0 +1,27 @@
+---
+dev:
+  application:
+    account:
+      username: 'user'
+      password: ''
+      password_store_username: 'anothername'
+      password_store_group: 'and a group'
+    app_details:
+      url: 'google.com'
+      protocol: http
+      secured: True # Accepts bool True/False
+      port: 443
+    timeout: 395  # in seconds
+    retry_delay: [45,60,120]
+  db:
+    account:
+      username:
+      password:
+      password_store_username:
+      password_store_group:
+    app_details:
+      url:
+      database:
+      port:
+    timeout:
+    retry_delay:
