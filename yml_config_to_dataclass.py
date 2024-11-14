@@ -112,12 +112,10 @@ def get_secret(in_dict: dict) -> str:
     '''
     future function to collect a secret from a remote secret store
     '''
-    secret = ''
-    if 'password' not in in_dict:
-        in_dict['password'] = ''
+    secret = in_dict.get('password','')
 
-    if len(in_dict['password'])>0:
-        return in_dict['password']
+    if len(secret)>0:
+        return secret
 
     needed_keys = ['password_store_username','password_store_group']
     for item in needed_keys:
@@ -216,16 +214,21 @@ if __name__ == "__main__":
     raw_settings = load_yml_file('global.yml')
     execution_settings = raw_settings['dev']
 
+    # inittate the dataclass container with the subparts
     dc_settings = SettingsItem(
         app=ApplicationItem(),
         db=DataBaseItem()
     )
+    # loop over all the selected parts of the yaml file and populate the
+    # dataclass skeleton with values
     for lkey,lvalue in execution_settings.items():
         if lkey == 'application':
-            # logging.info(lvalue)
             dc_settings.app = make_app_settings(lvalue)
+        if lkey == 'db':
+            dc_settings.db = make_db_settings(lvalue)
 
     logging.info(dc_settings)
-    logging.info(dc_settings.app.url)
-    # print_data_class(dc_app)
-    # print(execution_settings)
+    logging.info('the stored settings in dc_settings can now be accesses via .(dot) notification')
+    logging.info('''example, to access the 'url' for the 'app' part of the''')
+    logging.info('''settings us: 'dc_settings.app.url' and you will get: '%s' ''',
+                 dc_settings.app.url)
