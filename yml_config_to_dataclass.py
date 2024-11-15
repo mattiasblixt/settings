@@ -55,7 +55,7 @@ def load_ini_file(filename: str, divider='=', encoding='UTF-8') -> dict:
     Returns:
         dict, with all settings from file
     Raises:
-        Nothing
+        FileNotFoundError
     '''
     try:
         if '/' in filename:
@@ -88,11 +88,7 @@ def load_yml_file(filename: str) -> dict:
     @return: Returns a loaded yaml file as dictionary
     """
     try:
-        if '/' in filename:
-            config_path = os.path.join(os.getcwd(), filename)
-        else:
-            config_path = os.path.join(os.getcwd(), "config", filename)
-        with open(file=config_path, encoding="UTF-8") as file:
+        with open(file=filename, encoding="UTF-8") as file:
             config_settings = yaml.safe_load(file)
             return config_settings
     except FileNotFoundError as ex_fnf:
@@ -107,6 +103,22 @@ def load_yml_file(filename: str) -> dict:
     except AttributeError as exc_attrib:
         logging.error("AttributeError in yml file - %s", exc_attrib)
         return None
+
+
+def locate_file(file_name: str, paths=None) -> str:
+    """
+    function to locate an file (if it exists in any of the paths)
+    Raises:
+        FileNotFoundError
+    """
+    root_path = os.getcwd()
+    if paths is None:
+        paths = ['', 'config',]
+
+    for item in paths:
+        if os.path.exists(os.path.join(root_path, item, file_name)):
+            return os.path.join(root_path, item, file_name)
+    raise FileNotFoundError(f"File {file_name} not found")
 
 def print_data_class(dataclass_instance):
     '''
@@ -130,9 +142,9 @@ def make_url(url_dict: dict) -> str:
     # TODO add so the function an handle IF the URL already contains a protocl header
     # url_regex = r'(?:(http:|https:|ftp:|ftps:)\/\/)([\w-]+\.+[a-z]{2,24})'
     url = url_dict.get('url','')
-    protocol = url_dict.get('protocol','')
-    secured = url_dict.get('secured',None)
-    port = url_dict.get('port','')
+    protocol = url_dict.get('protocol', '')
+    secured = url_dict.get('secured', False)
+    port = url_dict.get('port', '')
     if len(protocol)> 0:
         if isinstance(port,int):
             #special handling to remove port 443 from https urls
@@ -152,7 +164,7 @@ def get_secret(in_dict: dict) -> str:
     '''
     secret = in_dict.get('password','')
 
-    if len(secret)>0:
+    if secret is None or len(secret)>0:
         return secret
 
     needed_keys = ['password_store_username','password_store_group']
@@ -242,6 +254,44 @@ def make_db_settings(in_dict:dict) -> DataBaseItem:
 
     return data_cls
 
+def load_settings(global_file:str='global.yml',
+                  execution_settings:str = 'settings.ini') -> SettingsItem:
+    '''
+    dedicated function to wrap all logic to load the settings into a dataclass
+    global_file defaults to 'global.yml'
+    Args:
+        global_file, str, defaults to 'global.yml'
+        execution_settings, str, defaults to 'settings.ini'
+    Returns:
+        SettingsItem, dataclass with all settings from file
+    Raises:
+        KeyError - if settings.ini file does not contain 'target' key
+
+    '''
+    raw_settings = load_yml_file(locate_file(global_file))
+    exec_settings = load_ini_file(locate_file(execution_settings))
+    needed_key = 'target'
+    if needed_key in exec_settings:
+        execution_settings = raw_settings[exec_settings[needed_key]]
+    else:
+        raise KeyError(f'needed key ({needed_key}) not found in .ini file')
+
+    # inittate the dataclass container with the subparts
+    # add more as applicable
+    dc_settings = SettingsItem(
+        app=ApplicationItem(),
+        db=DataBaseItem()
+    )
+
+    # loop over all the selected parts of the yaml file and populate the
+    # dataclass skeleton(s) with values, add more as applicable
+    for lkey,lvalue in execution_settings.items():
+        if lkey == 'application':
+            dc_settings.app = make_app_settings(lvalue)
+        if lkey == 'db':
+            dc_settings.db = make_db_settings(lvalue)
+    return dc_settings
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,
                     #format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
@@ -249,24 +299,11 @@ if __name__ == "__main__":
                     format='%(asctime)s %(levelname)s %(lineno)d %(message)s',
                     handlers=[logging.StreamHandler(sys.stdout)],
                     )
-    raw_settings = load_yml_file('global.yml')
-    execution_settings = raw_settings['dev']
 
-    # inittate the dataclass container with the subparts
-    dc_settings = SettingsItem(
-        app=ApplicationItem(),
-        db=DataBaseItem()
-    )
-    # loop over all the selected parts of the yaml file and populate the
-    # dataclass skeleton with values
-    for lkey,lvalue in execution_settings.items():
-        if lkey == 'application':
-            dc_settings.app = make_app_settings(lvalue)
-        if lkey == 'db':
-            dc_settings.db = make_db_settings(lvalue)
+    settings = load_settings()
 
-    logging.info(dc_settings)
-    logging.info('the stored settings in dc_settings can now be accesses via .(dot) notification')
+    logging.info(settings)
+    logging.info('the stored settings in settings can now be accesses via .(dot) notification')
     logging.info('''example, to access the 'url' for the 'app' part of the''')
-    logging.info('''settings us: 'dc_settings.app.url' and you will get: '%s' ''',
-                 dc_settings.app.url)
+    logging.info('''settings us: 'settings.app.url' and you will get: '%s' ''',
+                 settings.app.url)

@@ -10,7 +10,7 @@ class TestConfigToDataClass(unittest.TestCase):
     test class for the yml config to dataclass experiment
     this is is to support me in learning TDD
     '''
-    def test_load_yml_file_file_not_found(self):
+    def test_load_ini_file_file_not_found(self):
         '''
         tests for the function load_yml_file
         '''
