@@ -15,7 +15,7 @@ class ApplicationItem:
     for our application
     '''
     user: str = field(default='')
-    secret: str = field(repr=True, default='') #repr=False enasures that secret not is not printed
+    secret: str = field(repr=True, default='') #repr=False ensures that secret is not printed
     url: str = field(default='')
     timeout: int = field(default=400)
     retry_delay: list = field(default_factory=lambda: [60,120,180])
@@ -27,7 +27,7 @@ class DataBaseItem:
     for our application
     '''
     user: str = field(default='')
-    secret: str = field(repr=False, default='') #repr=False enasures that secret not is not printed
+    secret: str = field(repr=False, default='') #repr=False ensures that secret is not printed
     url: str = field(default='')
     database: str = field(default='')
     port: int = field(default=3306)
