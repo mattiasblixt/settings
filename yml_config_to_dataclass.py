@@ -15,7 +15,7 @@ class ApplicationItem:
     for our application
     '''
     user: str = field(default='')
-    secret: str = field(repr=True, default='') #repr=False makes the secret not printed
+    secret: str = field(repr=True, default='') #repr=False enasures that secret not is not printed
     url: str = field(default='')
     timeout: int = field(default=400)
     retry_delay: list = field(default_factory=lambda: [60,120,180])
@@ -27,7 +27,7 @@ class DataBaseItem:
     for our application
     '''
     user: str = field(default='')
-    secret: str = field(repr=False, default='') #repr=False makes the secret not printed
+    secret: str = field(repr=False, default='') #repr=False enasures that secret not is not printed
     url: str = field(default='')
     database: str = field(default='')
     port: int = field(default=3306)
@@ -41,6 +41,44 @@ class SettingsItem:
     '''
     app: ApplicationItem
     db: DataBaseItem
+
+def load_ini_file(filename: str, divider='=', encoding='UTF-8') -> dict:
+    '''
+    quick and dirty replacement for the load_dotenv() function from dotenv
+    This version does NOT stores the settings loaded as from the .env file as local
+    OS variables instead it "stores" them as a returned dict
+
+    Args:
+        script_folder, str path to file
+        divider, str, divided default =
+        encoding, str, encoding, default to UTF-8
+    Returns:
+        dict, with all settings from file
+    Raises:
+        Nothing
+    '''
+    try:
+        if '/' in filename:
+            config_path = os.path.join(os.getcwd(), filename)
+        else:
+            config_path = os.path.join(os.getcwd(), "config", filename)
+        with open(file=config_path, encoding=encoding) as file_handler:
+            line = file_handler.readline()
+            result = {}
+            while line:
+                if not line.startswith('#'):
+                    line_lst = line.split(divider)
+                    key = line_lst[0].strip()
+                    value = line_lst[1].strip()
+                    if value[0] == value[-1] and (value[0] in ['"', "'"]):
+                        value = value[1:-1]
+                    result.update({key: value})
+                line = file_handler.readline()
+        return result
+    except FileNotFoundError as ex_fnf:
+        logging.error("ERROR: There is no settings file, exiting - %s", ex_fnf)
+        raise FileNotFoundError from ex_fnf
+
 
 def load_yml_file(filename: str) -> dict:
     """
@@ -58,16 +96,16 @@ def load_yml_file(filename: str) -> dict:
             config_settings = yaml.safe_load(file)
             return config_settings
     except FileNotFoundError as ex_fnf:
-        logging.error("ERROR: There is no settings file, exiting - %s", ex_fnf)
+        logging.error("There is no settings file, exiting - %s", ex_fnf)
         raise FileNotFoundError from ex_fnf
     except KeyError as exc_key:
-        logging.error("ERROR: cannot find the following key in yml file, exiting - %s ", exc_key)
+        logging.error("Cannot find the following key in yml file, exiting - %s ", exc_key)
         return None
     except yaml.YAMLError as exc_yaml:
-        logging.error("ERROR: Cannot parse yml file - %s", exc_yaml)
+        logging.error("Cannot parse yml file - %s", exc_yaml)
         return None
     except AttributeError as exc_attrib:
-        logging.error("ERROR: AttributeError in yml file - %s", exc_attrib)
+        logging.error("AttributeError in yml file - %s", exc_attrib)
         return None
 
 def print_data_class(dataclass_instance):
