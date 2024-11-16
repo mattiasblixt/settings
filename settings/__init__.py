@@ -93,9 +93,6 @@ def make_url(url_dict: dict) -> str:
     '''
     maker function of an URL
     '''
-    # TODO add so the function can handle IF the URL already contains a protocol header
-    # url_regex = r'(?:(http:|https:|ftp:|ftps:)\/\/)([\w-]+\.+[a-z]{2,24})'
-
     if 'url' not in url_dict:
         raise KeyError('''required key 'url' is missing under 'app_details' ''')
 
@@ -106,6 +103,16 @@ def make_url(url_dict: dict) -> str:
     protocol = url_dict.get('protocol', '')
     secured = url_dict.get('secured', False)
     port = url_dict.get('port', '')
+
+    if ':' in url:
+        split_url_dict = clean_url(url)
+        if split_url_dict['port'] != port:
+            raise AssertionError('port value collected from url field \
+                                 differs from port set under app_details')
+        if split_url_dict['protocol'] != protocol:
+            raise AssertionError('protocol value collected from url field \
+                                 differs from protocol set under app_details')
+
     if len(protocol)> 0:
         if isinstance(port,int):
             #special handling to remove port 443 from https urls
@@ -236,23 +243,23 @@ def make_db_settings(in_dict:dict) -> DataBaseItem:
     data_cls.secret = get_secret(account)
     app_details = in_dict.get('app_details')
 
-    database = app_details.get('database',None)
+    database = app_details.get('database', None)
     if database is not None and isinstance(database,str):
         data_cls.database = database
 
-    port = app_details.get('port',None)
+    port = app_details.get('port', None)
     if port is not None and isinstance(port,int):
         data_cls.port = port
 
-    url = app_details.get('url',None)
+    url = app_details.get('url', None)
     if url is not None and isinstance(url,str):
         data_cls.url = url
 
-    timeout = app_details.get('timeout',None)
+    timeout = app_details.get('timeout', None)
     if timeout is not None and isinstance(timeout,int):
         data_cls.timeout = timeout
 
-    retry_delay = in_dict.get('retry_delay',None)
+    retry_delay = in_dict.get('retry_delay', None)
     if retry_delay is not None and isinstance(retry_delay,list):
         data_cls.retry_delay = retry_delay
 
