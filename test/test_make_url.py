@@ -66,6 +66,7 @@ class TestMakeUrl(unittest.TestCase):
                           'secured':False,
                           'port':8080})
         self.assertEqual(test1,'http://google.com:8080')
+
     def test_make_url_with_secured_protocol_and_port(self):
         '''
         testcase describe here

@@ -3,6 +3,7 @@ module that converts a yaml config file to a dataclass settings object
 https://www.datacamp.com/tutorial/python-data-classes
 '''
 import os
+import re
 import logging
 from dataclasses import dataclass, fields
 import yaml
@@ -96,9 +97,9 @@ def make_url(url_dict: dict) -> str:
     # url_regex = r'(?:(http:|https:|ftp:|ftps:)\/\/)([\w-]+\.+[a-z]{2,24})'
 
     if 'url' not in url_dict:
-        raise KeyError('''required key 'url' is missing under key 'app_details' ''')
+        raise KeyError('''required key 'url' is missing under 'app_details' ''')
 
-    url = url_dict.get('url',None)
+    url = url_dict.get('url', None)
     if url is None:
         raise ValueError('''required key 'url' is missing a value''')
 
@@ -174,6 +175,45 @@ def make_app_settings(in_dict:dict) -> ApplicationItem:
         data_cls.retry_delay = retry_delay
 
     return data_cls
+
+
+def clean_url(in_str: str) -> dict:
+    '''
+    url cleaner function
+    '''
+    result_dict = {}
+
+    fqdn_regex = r'(http|https|ftp|ftps)\:\/\/([\w-]+(?:\.[a-z]{2,24})*)'
+    host_regex = r'(?:(http|https|ftp|ftps)\:\/\/)([\w-]+)'
+
+    if len(in_str) == 0:
+        raise ValueError('Empty url')
+
+    supported_protocol = False
+    supported_protocols = ['http','ftp']
+    for item in supported_protocols:
+        if item in in_str:
+            supported_protocol = True
+
+    if not supported_protocol:
+        raise ValueError('Unsupported protocol found in url')
+
+    if '.' in in_str:
+        result = re.search(fqdn_regex, in_str)
+    else:
+        result = re.search(host_regex, in_str)
+
+    if result:
+        result_dict['url'] = result.group(2)
+        result_dict['protocol'] = result.group(1)
+
+    # assuming port found if digits found after : in url
+    port_regex = r'\:(\d+)'
+    result = re.search(port_regex, in_str)
+    if result:
+        result_dict['port'] = int(result.group(1))
+
+    return result_dict
 
 
 def make_db_settings(in_dict:dict) -> DataBaseItem:
