@@ -89,13 +89,24 @@ class TestMakeUrl(unittest.TestCase):
 
     def test_make_url_with_unsecured_protocol_and_port443(self):
         '''
-        testcase describe here
+        testcase described here
         '''
         test1 = make_url({'url':'google.com',
                           'protocol':'http',
                           'secured':False,
                           'port':443})
         self.assertEqual(test1,'http://google.com:443')
+
+    def test_make_url_with_port_diff(self):
+        '''
+        testcase described here
+        '''
+        self.assertRaises(AssertionError,
+                          make_url,
+                          {'url':'http://google.com:80',
+                          'protocol':'http',
+                          'secured':False,
+                          'port':443})
 
 if __name__ == "__main__":
     unittest.main()
