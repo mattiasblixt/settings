@@ -1,5 +1,5 @@
 '''
-testbed for making a yaml config to data class settings object
+module that converts a yaml config file to a dataclass settings object
 https://www.datacamp.com/tutorial/python-data-classes
 '''
 import os
@@ -7,6 +7,7 @@ import logging
 from dataclasses import dataclass, fields
 import yaml
 from .settingsitems import SettingsItem, ApplicationItem, DataBaseItem
+
 
 def load_ini_file(filename: str, divider='=', encoding='UTF-8') -> dict:
     '''
@@ -86,20 +87,6 @@ def locate_file(file_name: str, paths=None) -> str:
             return os.path.join(root_path, item, file_name)
     raise FileNotFoundError(f"File {file_name} not found")
 
-def print_data_class(dataclass_instance):
-    '''
-    dataclass printer
-    '''
-
-    # option 1: fields
-    all_fields = fields(dataclass_instance)
-
-    # # option 2: inspect
-    # members = inspect.getmembers(type(dataclass_instance))
-    # fields = list(dict(members)['__dataclass_fields__'].values())
-
-    for v in all_fields:
-        logging.info(f'{v.name}: ({v.type.__name__}) = {getattr(dataclass_instance, v.name)}')
 
 def make_url(url_dict: dict) -> str:
     '''
@@ -124,6 +111,7 @@ def make_url(url_dict: dict) -> str:
 
     return f'''{protocol}{url}{port}'''
 
+
 def get_secret(in_dict: dict) -> str:
     '''
     future function to collect a secret from a remote secret store
@@ -142,11 +130,13 @@ def get_secret(in_dict: dict) -> str:
 
     return secret
 
+
 def fetch_secret_from_store(in_dict:dict) -> str:
     '''
     mock function until such time a passord store is decided
     '''
     return 'collected_secret'
+
 
 def make_app_settings(in_dict:dict) -> ApplicationItem:
     '''
@@ -177,6 +167,7 @@ def make_app_settings(in_dict:dict) -> ApplicationItem:
         data_cls.retry_delay = retry_delay
 
     return data_cls
+
 
 def make_db_settings(in_dict:dict) -> DataBaseItem:
     '''
@@ -220,6 +211,7 @@ def make_db_settings(in_dict:dict) -> DataBaseItem:
 
     return data_cls
 
+
 def load_settings(global_file:str='global.yml',
                   execution_settings:str = 'settings.ini') -> SettingsItem:
     '''
@@ -232,7 +224,6 @@ def load_settings(global_file:str='global.yml',
         SettingsItem, dataclass with all settings from file
     Raises:
         KeyError - if settings.ini file does not contain 'target' key
-
     '''
     raw_settings = load_yml_file(locate_file(global_file))
     exec_settings = load_ini_file(locate_file(execution_settings))
