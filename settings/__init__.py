@@ -90,11 +90,12 @@ def locate_file(file_name: str, paths=None) -> str:
 
 def make_url(url_dict: dict) -> str:
     '''
-    tdd testing  1 oh 1
+    maker function of an URL
     '''
     # TODO add so the function an handle IF the URL already contains a protocl header
     # url_regex = r'(?:(http:|https:|ftp:|ftps:)\/\/)([\w-]+\.+[a-z]{2,24})'
     url = url_dict.get('url','')
+    # TODO add so it raises valueerror if url is empty
     protocol = url_dict.get('protocol', '')
     secured = url_dict.get('secured', False)
     port = url_dict.get('port', '')
@@ -114,7 +115,7 @@ def make_url(url_dict: dict) -> str:
 
 def get_secret(in_dict: dict) -> str:
     '''
-    future function to collect a secret from a remote secret store
+    wrapper function to collect a secret from a remote secret store
     '''
     secret = in_dict.get('password','')
 
