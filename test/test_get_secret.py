@@ -2,7 +2,7 @@
 testfile for the creation yaml to settings dataclass
 '''
 import unittest
-from yml_config_to_dataclass import get_secret
+from settings import get_secret
 
 class TestGetSecret(unittest.TestCase):
     '''

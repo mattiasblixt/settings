@@ -2,7 +2,7 @@
 testfile for the creation yaml to settings dataclass
 '''
 import unittest
-from yml_config_to_dataclass import make_url
+from settings import make_url
 
 class TestMakeUrl(unittest.TestCase):
     '''
@@ -11,10 +11,19 @@ class TestMakeUrl(unittest.TestCase):
     '''
     def test_make_url_with_empty_dict(self):
         '''
-        test that the function always returns a sdtring even with empty dict
+        test that the function raises a keyerror is missing url
         '''
-        test1 = make_url({})
-        self.assertIsInstance(test1,str)
+        self.assertRaises(KeyError,
+                          make_url,
+                          {})
+
+    def test_make_url_with_empty_url(self):
+        '''
+        test that the function raises a keyerror is missing url
+        '''
+        self.assertRaises(ValueError,
+                          make_url,
+                          {'url':None})
 
     def test_make_url_with_url(self):
         '''
@@ -66,15 +75,17 @@ class TestMakeUrl(unittest.TestCase):
                           'secured':True,
                           'port':8080})
         self.assertEqual(test1,'https://google.com:8080')
+
     def test_make_url_with_secured_protocol_and_port443(self):
         '''
         testcase describe here
         '''
         test1 = make_url({'url':'google.com',
                           'protocol':'http',
-                          'secured':True,
+                          'secured':False,
                           'port':443})
-        self.assertEqual(test1,'https://google.com')
+        self.assertEqual(test1,'http://google.com:443')
+
     def test_make_url_with_unsecured_protocol_and_port443(self):
         '''
         testcase describe here

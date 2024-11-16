@@ -3,7 +3,7 @@ testfile for the creation yaml to settings dataclass
 '''
 import unittest
 from dataclasses import is_dataclass
-from yml_config_to_dataclass import make_app_settings, \
+from settings import make_app_settings, \
                                ApplicationItem
 
 class TestMakeAppSettings(unittest.TestCase):
@@ -51,7 +51,9 @@ class TestMakeAppSettings(unittest.TestCase):
                                           'password_store_username':'',
                                           'password_store_group':'',
                                       },
-                                       'app_details':{},
+                                       'app_details':{
+                                           'url':''
+                                       },
                                        'timeout':'',
                                        'retry_delay':''})
         self.assertIsInstance(test_case, ApplicationItem)
@@ -65,7 +67,9 @@ class TestMakeAppSettings(unittest.TestCase):
                                           'password_store_username':'',
                                           'password_store_group':'',
                                       },
-                                       'app_details':{},
+                                       'app_details':{
+                                           'url':'',
+                                       },
                                        'timeout':'',
                                        'retry_delay':''})
         self.assertIsInstance(test_case.user, str)
@@ -78,7 +82,9 @@ class TestMakeAppSettings(unittest.TestCase):
                                           'password_store_username':'',
                                           'password_store_group':'',
                                       },
-                                       'app_details':{},
+                                       'app_details':{
+                                           'url':''
+                                       },
                                        'timeout':'',
                                        'retry_delay':''})
         self.assertIsInstance(test_case.user, str)
@@ -91,7 +97,9 @@ class TestMakeAppSettings(unittest.TestCase):
                                           'password_store_username':'',
                                           'password_store_group':'',
                                       },
-                                       'app_details':{},
+                                       'app_details':{
+                                           'url':''
+                                       },
                                        'timeout':'',
                                        'retry_delay':''})
         self.assertIsInstance(test_case.url, str)
@@ -104,7 +112,9 @@ class TestMakeAppSettings(unittest.TestCase):
                                           'password_store_username':'',
                                           'password_store_group':'',
                                       },
-                                       'app_details':{},
+                                       'app_details':{
+                                           'url':'',
+                                       },
                                        'timeout':'',
                                        'retry_delay':''})
         self.assertIsInstance(test_case.timeout, int)
@@ -117,7 +127,9 @@ class TestMakeAppSettings(unittest.TestCase):
                                           'password_store_username':'',
                                           'password_store_group':'',
                                       },
-                                       'app_details':{},
+                                       'app_details':{
+                                           'url':''
+                                       },
                                        'timeout':'',
                                        'retry_delay':''})
         self.assertIsInstance(test_case.retry_delay, list)
@@ -130,7 +142,9 @@ class TestMakeAppSettings(unittest.TestCase):
                                           'password_store_username':'',
                                           'password_store_group':'',
                                       },
-                                       'app_details':{},
+                                       'app_details':{
+                                           'url':''
+                                       },
                                        'timeout':'',
                                        'retry_delay':''})
         self.assertIsInstance(test_case, ApplicationItem)
@@ -145,7 +159,9 @@ class TestMakeAppSettings(unittest.TestCase):
                                           'password_store_username':'',
                                           'password_store_group':'',
                                        },
-                                       'app_details':{},
+                                       'app_details':{
+                                           'url':''
+                                       },
                                        'timeout':'',
                                        'retry_delay':''})
         self.assertEqual(test_case.user,'appuser')
@@ -159,6 +175,7 @@ class TestMakeAppSettings(unittest.TestCase):
                                           'password_store_group':'',
                                       },
                                        'app_details':{
+                                           'url':'',
                                            'protocol':'http',
                                        },
                                        'timeout':'',
@@ -174,6 +191,7 @@ class TestMakeAppSettings(unittest.TestCase):
                                           'password_store_group':'',
                                       },
                                        'app_details':{
+                                           'url':'',
                                            'protocol':'http',
                                            'port':8080,
                                        },
@@ -264,7 +282,9 @@ class TestMakeAppSettings(unittest.TestCase):
                                           'password_store_username':'',
                                           'password_store_group':'',
                                       },
-                                       'app_details':{},
+                                       'app_details':{
+                                           'url':'',
+                                       },
                                        'timeout':120,
                                        'retry_delay':''})
 
@@ -278,7 +298,9 @@ class TestMakeAppSettings(unittest.TestCase):
                                           'password_store_username':'',
                                           'password_store_group':'',
                                       },
-                                       'app_details':{},
+                                       'app_details':{
+                                           'url':'',
+                                       },
                                        'timeout':'',
                                        'retry_delay':[35,70,105]})
 

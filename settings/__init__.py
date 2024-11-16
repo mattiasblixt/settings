@@ -92,10 +92,16 @@ def make_url(url_dict: dict) -> str:
     '''
     maker function of an URL
     '''
-    # TODO add so the function an handle IF the URL already contains a protocl header
+    # TODO add so the function can handle IF the URL already contains a protocol header
     # url_regex = r'(?:(http:|https:|ftp:|ftps:)\/\/)([\w-]+\.+[a-z]{2,24})'
-    url = url_dict.get('url','')
-    # TODO add so it raises valueerror if url is empty
+
+    if 'url' not in url_dict:
+        raise KeyError('''required key 'url' is missing under key 'app_details' ''')
+
+    url = url_dict.get('url',None)
+    if url is None:
+        raise ValueError('''required key 'url' is missing a value''')
+
     protocol = url_dict.get('protocol', '')
     secured = url_dict.get('secured', False)
     port = url_dict.get('port', '')

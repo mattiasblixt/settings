@@ -4,14 +4,14 @@ testfile for make_db_settings
 
 import unittest
 from dataclasses import is_dataclass
-from yml_config_to_dataclass import make_db_settings, DataBaseItem
+from settings import make_db_settings, DataBaseItem
 
 class TestMakeDbSettings(unittest.TestCase):
     '''
     test class for make_db_settings
     '''
 
-    def test_make_db_settings(self,):
+    def test_make_db_settings_return(self,):
         '''
         testing so we always get a dataclass of type DataBaseItem
         '''

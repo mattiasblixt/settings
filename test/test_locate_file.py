@@ -4,7 +4,7 @@ testfile for the creation yaml to settings dataclass
 import unittest
 import os
 from unittest.mock import patch
-from yml_config_to_dataclass import locate_file
+from settings import locate_file
 
 class TestConfigToDataClass(unittest.TestCase):
     '''

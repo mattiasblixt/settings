@@ -2,7 +2,7 @@
 testfile for the creation yaml to settings dataclass
 '''
 import unittest
-from yml_config_to_dataclass import load_yml_file
+from settings import load_yml_file
 
 class TestConfigToDataClass(unittest.TestCase):
     '''

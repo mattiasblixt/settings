@@ -3,7 +3,7 @@ testfile for the creation yaml to settings dataclass
 '''
 import unittest
 from unittest.mock import mock_open, patch
-from yml_config_to_dataclass import load_ini_file
+from settings import load_ini_file
 
 class TestConfigToDataClass(unittest.TestCase):
     '''
